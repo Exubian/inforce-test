@@ -1,5 +1,8 @@
 const express = require('express');
+const cors = require('cors')
 const mongoose = require('mongoose');
+
+const PORT = 3111;
 
 const app = express();
 
@@ -8,45 +11,46 @@ mongoose.connect('mongodb://localhost:27017/test')
   .catch(err => console.error('Failed to connect to MongoDB', err));
 
 const productSchema = new mongoose.Schema({
-  imageUrl: String,
-  name: String,
-  count: Number,
+  imageUrl: { type: String, default: '' },
+  name: { type: String, default: '' },
+  count: { type: Number, default: 0 },
   size: {
-    width: Number,
-    height: Number
+    width: { type: Number, default: 0 },
+    height: { type: Number, default: 0 } 
   },
-  weight: String,
-  comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }]
+  weight: { type: String, default: '' },
+  comments: { type: [String], default: [] }
 });
 
 const Product = mongoose.model('Product', productSchema);
 
-// Определение схемы и модели для комментариев
-const commentSchema = new mongoose.Schema({
-  productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
-  description: String,
-  date: Date
-});
-
-const Comment = mongoose.model('Comment', commentSchema);
-
 app.use(express.json());
+app.use(cors())
 
-// Обработка CRUD операций для продуктов
 app.get('/products', async (req, res) => {
-  const products = await Product.find();
+  const products = processData(await Product.find());
   res.send(products);
 });
+
+// app.post('/products/fill', async (req, res) => {
+  
+//   const products = [];
+
+//   for (let i = 0; i < req.body.length; i++) {
+//     let el = req.body[i];
+//     let product = new Product(el);
+//     await product.save();
+//     products.push(product);
+//   };
+  
+//   res.send(products);
+// });
 
 app.post('/products', async (req, res) => {
-  const products = req.body
-  for (let i = 0; i < products.length; i++) {
-    let el = products[i]
-    let product = new Product(el);
-    await product.save();
-  };
-  
-  res.send(products);
+  const product = new Product(req.body);
+  await product.save();
+
+  res.send(product);
 });
 
 app.get('/products/:id', async (req, res) => {
@@ -55,22 +59,42 @@ app.get('/products/:id', async (req, res) => {
   res.send(product);
 });
 
-app.put('/products/:id', async (req, res) => {
+app.patch('/products/:id', async (req, res) => {
   const product = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true });
   if (!product) return res.status(404).send('Product not found');
   res.send(product);
 });
+// app.patch('/products/img', async (req, res) => {
+//   const products = []
+//   // console.log(req.body)
+//   for (let el of req.body) {
+//     // console.log(el);
+//     const { imageUrl } = el;
+    
+//     const product = await Product.findByIdAndUpdate(el.id, {imageUrl}, { new: true });
+//     if (!product) return res.status(404).send('Product not found');
+    
+//     products.push(product)
+//   }
+//   res.send(products);
+// });
 
 app.delete('/products/:id', async (req, res) => {
-  const product = await Product.findByIdAndRemove(req.params.id);
+  const product = await Product.findByIdAndDelete(req.params.id);
   if (!product) return res.status(404).send('Product not found');
   res.send(product);
 });
 
-// Обработка CRUD операций для комментариев
-app.get('/comments', async (req, res) => {
-  const comments = await Comment.find();
-  res.send(comments);
-});
+app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
 
-app.listen(3111, () => console.log('Server started on port 3000'));
+function processData(data) {
+  if (Array.isArray(data)) {
+      return data.map(item => {
+          const { _id, ...rest } = item.toObject();
+          return { id: _id, ...rest };
+      });
+  } else {
+      const { _id, ...rest } = data.toObject();
+      return { id: _id, ...rest };
+  }
+};

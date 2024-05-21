@@ -3,3 +3,48 @@
   padding: 0;
   box-sizing: border-box;
 }
+#root {
+  min-width: 480px;
+}
+
+button {
+  padding: 5px 10px;
+  background-color: #2677cb;
+  color: white;
+  cursor: pointer;
+}
+
+.flex {
+  display: flex;
+  align-items: start;
+ }
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.form {
+  padding: 25px;
+  padding-right: 0;
+  font-size: 24px;
+  background-color: white;
+}
+
+form input {
+  margin-left: 20px;
+  font-size: 24px;
+  padding-left: 3px;
+  padding-right: 3px;
+  width: max-content;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: #000000a0;
+  padding: 10vh 20vw;
+}
+

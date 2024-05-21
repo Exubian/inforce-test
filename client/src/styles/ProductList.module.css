@@ -1,0 +1,30 @@
+.product-list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.add_button_top {
+  font-size: 24px;
+  padding: 10px;
+  height: 200px;
+  width: 80px;
+  background-color: #2677cb;
+  color: white;
+}
+
+.add_button {
+  font-size: 24px;
+  padding: 10px;
+  height: 70px;
+  width: 70px;
+  background-color: #2677cb;
+  color: white;
+}
+
+section.product-list {
+  margin-top: 50px;
+  align-items: center;
+}

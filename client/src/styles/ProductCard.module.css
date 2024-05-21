@@ -1,0 +1,15 @@
+.product {
+  padding: 25px;
+  background-color: whitesmoke;
+}
+
+.image_block {
+  height: 220px;
+  width: 200px;
+}
+
+.image {
+  height: 200px;
+  width: inherit;
+  cursor: pointer;
+}
